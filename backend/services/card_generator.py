@@ -61,13 +61,13 @@ def render_card(draft: dict, slug: str) -> str:
     colors = style["colors"]
 
     # Fonts
-    f_name     = get_font(56, bold=True)
-    f_title    = get_font(42, bold=False)
-    f_headline = get_font(96, bold=True)
-    f_num      = get_font(40, bold=False)
-    f_sec_bold = get_font(54, bold=True)
-    f_body     = get_font(44, bold=False)
-    f_footer   = get_font(40, bold=False)
+    f_name     = get_font(30, bold=True)
+    f_title    = get_font(22, bold=False)
+    f_headline = get_font(64, bold=True)
+    f_num      = get_font(20, bold=False)
+    f_sec_bold = get_font(30, bold=True)
+    f_body     = get_font(24, bold=False)
+    f_footer   = get_font(22, bold=False)
 
     img = Image.new("RGB", (W, H), "#FFFFFF")
     d = ImageDraw.Draw(img)
@@ -80,43 +80,43 @@ def render_card(draft: dict, slug: str) -> str:
         hs = circular_crop(headshot_path, 80)
         img.paste(hs, (PAD_X, y), hs)
 
-    d.text((PAD_X + 96, y + 8), "Sarabpreet Singh",
+    d.text((PAD_X + 96, y + 14), "Sarabpreet Singh",
            font=f_name, fill=colors["black"])
-    d.text((PAD_X + 96, y + 44), "Manufacturing Systems Architect",
+    d.text((PAD_X + 96, y + 48), "Manufacturing Systems Architect",
            font=f_title, fill=colors["light_grey"])
-    y += 80 + 50
+    y += 80 + 40
 
     # Headline
     headline_lines = wrap_text(draft["headline"], f_headline, CONTENT_W)
     for line in headline_lines:
         d.text((PAD_X, y), line, font=f_headline, fill=colors["black"])
         bbox = d.textbbox((0, 0), line, font=f_headline)
-        y += (bbox[3] - bbox[1]) + 16
-    y += 44
+        y += (bbox[3] - bbox[1]) + 10
+    y += 28
 
     # Divider
     d.line([(PAD_X, y), (W - PAD_X, y)], fill=colors["divider"], width=1)
-    y += 44
+    y += 28
 
     # Sections
     for section in draft.get("sections", []):
         d.text((PAD_X, y), section["number"],
                font=f_num, fill="#AAAAAA")
-        y += 10 + 24
+        y += 8 + 20
 
         title_lines = wrap_text(section["title"], f_sec_bold, CONTENT_W)
         for line in title_lines:
             d.text((PAD_X, y), line, font=f_sec_bold, fill=colors["dark_grey"])
             bbox = d.textbbox((0, 0), line, font=f_sec_bold)
             y += (bbox[3] - bbox[1]) + 4
-        y += 12
+        y += 8
 
         body_lines = wrap_text(section["body"], f_body, CONTENT_W)
         for line in body_lines:
             d.text((PAD_X, y), line, font=f_body, fill="#666666")
             bbox = d.textbbox((0, 0), line, font=f_body)
-            y += (bbox[3] - bbox[1]) + 10
-        y += 44
+            y += (bbox[3] - bbox[1]) + 6
+        y += 28
 
         # Safety check — stop if exceeding canvas (leave room for footer)
         if y > H - 160:
