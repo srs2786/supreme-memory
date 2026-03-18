@@ -59,13 +59,13 @@ def render_card(draft: dict, slug: str) -> str:
     colors = style["colors"]
 
     # Fonts
-    f_name     = get_font(32, bold=True)
-    f_title    = get_font(24, bold=False)
-    f_headline = get_font(72, bold=True)
-    f_num      = get_font(24, bold=False)
-    f_sec_bold = get_font(32, bold=True)
-    f_body     = get_font(26, bold=False)
-    f_footer   = get_font(24, bold=False)
+    f_name     = get_font(48, bold=True)
+    f_title    = get_font(36, bold=False)
+    f_headline = get_font(88, bold=True)
+    f_num      = get_font(36, bold=False)
+    f_sec_bold = get_font(46, bold=True)
+    f_body     = get_font(38, bold=False)
+    f_footer   = get_font(36, bold=False)
 
     img = Image.new("RGB", (W, H), "#FFFFFF")
     d = ImageDraw.Draw(img)
