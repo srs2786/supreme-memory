@@ -1,34 +1,47 @@
 import os
+import glob
+import shutil
 import json
 import textwrap
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
+
+FONT_DIR = "assets/fonts"
+FONT_REGULAR = os.path.join(FONT_DIR, "DejaVuSans.ttf")
+FONT_BOLD    = os.path.join(FONT_DIR, "DejaVuSans-Bold.ttf")
+
+def _setup_fonts():
+    """Copy DejaVu fonts from nix store to local assets dir at startup."""
+    os.makedirs(FONT_DIR, exist_ok=True)
+    for name, target in [("DejaVuSans.ttf", FONT_REGULAR), ("DejaVuSans-Bold.ttf", FONT_BOLD)]:
+        if os.path.exists(target):
+            continue
+        matches = glob.glob(f"/nix/store/*/share/fonts/truetype/{name}")
+        if matches:
+            shutil.copy(matches[0], target)
+            print(f"[Fonts] Copied {name} from nix store")
+        else:
+            print(f"[Fonts] WARNING: {name} not found in nix store")
+
+_setup_fonts()
 
 def load_style():
     with open("config/style_guide.json") as f:
         return json.load(f)["card"]
 
 def get_font(size: int, bold=False):
-    """Load font — DejaVu on Railway (nix), Helvetica on Mac."""
-    import glob as _glob
-
-    # Dynamically find DejaVu in nix store (Railway)
-    font_name = "DejaVuSans-Bold.ttf" if bold else "DejaVuSans.ttf"
-    nix_matches = _glob.glob(f"/nix/store/*/share/fonts/truetype/{font_name}")
-
-    candidates = nix_matches + [
-        f"/usr/share/fonts/truetype/dejavu/{font_name}",
-        f"/run/current-system/sw/share/X11/fonts/dejavu/{font_name}",
+    """Load font — DejaVu (copied at startup), fallback to system Helvetica."""
+    local = FONT_BOLD if bold else FONT_REGULAR
+    candidates = [
+        local,
         "/System/Library/Fonts/Helvetica.ttc",
     ]
-
     for path in candidates:
         try:
             idx = 1 if (bold and path.endswith("Helvetica.ttc")) else 0
             return ImageFont.truetype(path, size, index=idx)
         except Exception:
             continue
-
     return ImageFont.load_default()
 
 def wrap_text(text: str, font, max_width: int) -> list[str]:
