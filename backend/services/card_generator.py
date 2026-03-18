@@ -9,9 +9,31 @@ def load_style():
         return json.load(f)["card"]
 
 def get_font(size: int, bold=False):
-    """Load bundled Work Sans font — works on all platforms."""
-    font_file = "assets/fonts/WorkSans-Bold.ttf" if bold else "assets/fonts/WorkSans-Regular.ttf"
-    return ImageFont.truetype(font_file, size)
+    """Load font — DejaVu on Railway (Linux), system font on Mac."""
+    candidates = []
+    if bold:
+        candidates = [
+            "/run/current-system/sw/share/X11/fonts/dejavu/DejaVuSans-Bold.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+            "/nix/store/*/share/fonts/truetype/DejaVuSans-Bold.ttf",
+            "assets/fonts/Inter.ttf",
+            "/System/Library/Fonts/Helvetica.ttc",
+        ]
+    else:
+        candidates = [
+            "/run/current-system/sw/share/X11/fonts/dejavu/DejaVuSans.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            "assets/fonts/Inter.ttf",
+            "/System/Library/Fonts/Helvetica.ttc",
+        ]
+    for path in candidates:
+        try:
+            if bold and path.endswith("Helvetica.ttc"):
+                return ImageFont.truetype(path, size, index=1)
+            return ImageFont.truetype(path, size)
+        except Exception:
+            continue
+    return ImageFont.load_default()
 
 def wrap_text(text: str, font, max_width: int) -> list[str]:
     dummy = Image.new("RGB", (1, 1))
