@@ -1,2 +1,5 @@
 [phases.setup]
-nixPkgs = ["dejavu_fonts"]
+nixPkgs = ["dejavu_fonts", "fontconfig"]
+
+[phases.build]
+cmds = ["pip install -r requirements.txt", "fc-cache -f -v || true", "ls /usr/share/fonts/truetype/dejavu/ 2>/dev/null || echo 'No dejavu at /usr/share' && find /nix/store -name 'DejaVuSans.ttf' 2>/dev/null | head -3 || echo 'No DejaVuSans in nix'"]
