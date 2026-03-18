@@ -1,60 +1,26 @@
 import os
-import glob
-import shutil
 import json
 import textwrap
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
-
-FONT_DIR = "assets/fonts"
-FONT_REGULAR = os.path.join(FONT_DIR, "DejaVuSans.ttf")
-FONT_BOLD    = os.path.join(FONT_DIR, "DejaVuSans-Bold.ttf")
-
-def _setup_fonts():
-    """Copy DejaVu fonts from nix store to local assets dir at startup."""
-    os.makedirs(FONT_DIR, exist_ok=True)
-    for name, target in [("DejaVuSans.ttf", FONT_REGULAR), ("DejaVuSans-Bold.ttf", FONT_BOLD)]:
-        if os.path.exists(target):
-            print(f"[Fonts] Already exists: {target}")
-            continue
-        matches = glob.glob(f"/nix/store/*/share/fonts/truetype/{name}")
-        print(f"[Fonts] Searching nix store for {name}: found {len(matches)} match(es)")
-        if matches:
-            shutil.copy(matches[0], target)
-            print(f"[Fonts] Copied {name} from {matches[0]}")
-        else:
-            # Try broader search
-            broader = glob.glob(f"/nix/store/**/{name}", recursive=True)
-            print(f"[Fonts] Broader search for {name}: found {len(broader)} match(es)")
-            if broader:
-                shutil.copy(broader[0], target)
-                print(f"[Fonts] Copied {name} from {broader[0]}")
-            else:
-                print(f"[Fonts] WARNING: {name} not found anywhere in nix store")
-
-_setup_fonts()
 
 def load_style():
     with open("config/style_guide.json") as f:
         return json.load(f)["card"]
 
 def get_font(size: int, bold=False):
-    """Load font — DejaVu (copied at startup), fallback to system Helvetica."""
-    local = FONT_BOLD if bold else FONT_REGULAR
-    candidates = [
-        local,
-        "/System/Library/Fonts/Helvetica.ttc",
-    ]
-    for path in candidates:
-        try:
-            idx = 1 if (bold and path.endswith("Helvetica.ttc")) else 0
-            font = ImageFont.truetype(path, size, index=idx)
-            print(f"[Fonts] Loaded {path} size={size} bold={bold}")
-            return font
-        except Exception as e:
-            print(f"[Fonts] Failed {path}: {e}")
-            continue
-    print(f"[Fonts] Using default font size={size}")
+    """Load font — Helvetica on Mac, DejaVu on Linux (Railway)."""
+    try:
+        idx = 1 if bold else 0
+        return ImageFont.truetype("/System/Library/Fonts/HelveticaNeue.ttc", size, index=idx)
+    except Exception:
+        pass
+    try:
+        path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold \
+               else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+        return ImageFont.truetype(path, size)
+    except Exception:
+        pass
     return ImageFont.load_default()
 
 def wrap_text(text: str, font, max_width: int) -> list[str]:
