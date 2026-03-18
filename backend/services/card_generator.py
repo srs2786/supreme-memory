@@ -15,13 +15,22 @@ def _setup_fonts():
     os.makedirs(FONT_DIR, exist_ok=True)
     for name, target in [("DejaVuSans.ttf", FONT_REGULAR), ("DejaVuSans-Bold.ttf", FONT_BOLD)]:
         if os.path.exists(target):
+            print(f"[Fonts] Already exists: {target}")
             continue
         matches = glob.glob(f"/nix/store/*/share/fonts/truetype/{name}")
+        print(f"[Fonts] Searching nix store for {name}: found {len(matches)} match(es)")
         if matches:
             shutil.copy(matches[0], target)
-            print(f"[Fonts] Copied {name} from nix store")
+            print(f"[Fonts] Copied {name} from {matches[0]}")
         else:
-            print(f"[Fonts] WARNING: {name} not found in nix store")
+            # Try broader search
+            broader = glob.glob(f"/nix/store/**/{name}", recursive=True)
+            print(f"[Fonts] Broader search for {name}: found {len(broader)} match(es)")
+            if broader:
+                shutil.copy(broader[0], target)
+                print(f"[Fonts] Copied {name} from {broader[0]}")
+            else:
+                print(f"[Fonts] WARNING: {name} not found anywhere in nix store")
 
 _setup_fonts()
 
@@ -39,9 +48,13 @@ def get_font(size: int, bold=False):
     for path in candidates:
         try:
             idx = 1 if (bold and path.endswith("Helvetica.ttc")) else 0
-            return ImageFont.truetype(path, size, index=idx)
-        except Exception:
+            font = ImageFont.truetype(path, size, index=idx)
+            print(f"[Fonts] Loaded {path} size={size} bold={bold}")
+            return font
+        except Exception as e:
+            print(f"[Fonts] Failed {path}: {e}")
             continue
+    print(f"[Fonts] Using default font size={size}")
     return ImageFont.load_default()
 
 def wrap_text(text: str, font, max_width: int) -> list[str]:
