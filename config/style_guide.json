@@ -1,0 +1,47 @@
+{
+  "author": {
+    "name": "Sarabpreet Singh",
+    "title": "Manufacturing Systems Architect",
+    "handle": "@sarabpreetsingh"
+  },
+  "voice": {
+    "tone": "Direct, authoritative, no corporate speak. Senior consultant talking to peers.",
+    "pov": "First person or observational. Never preachy.",
+    "avoid": ["buzzwords", "emojis", "generic AI hype", "vague statements"],
+    "prefer": ["specific mechanisms", "real numbers", "counterintuitive observations", "factory floor reality"]
+  },
+  "post_format": {
+    "caption_words": "150-250",
+    "opening": "Sharp — a counterintuitive observation, a number, or a statement that creates tension",
+    "closing": "A question or directional statement that invites engagement",
+    "hashtag_count": "8-12"
+  },
+  "hashtags": [
+    "#manufacturing", "#supplychainmanagement", "#AI", "#industrialAI",
+    "#factoryoperations", "#operationalexcellence", "#systemsthinking",
+    "#digitaltransformation", "#manufacturingleadership", "#consultinglife",
+    "#automation", "#claudecode"
+  ],
+  "card": {
+    "width": 1200,
+    "height": 1200,
+    "background": "#FFFFFF",
+    "padding_x": 80,
+    "padding_y": 70,
+    "colors": {
+      "black": "#0A0A0A",
+      "dark_grey": "#1A1A1A",
+      "medium_grey": "#555555",
+      "light_grey": "#999999",
+      "divider": "#E0E0E0"
+    },
+    "sections": "2-3 numbered sections per card",
+    "footer_handle": "@sarabpreetsingh"
+  },
+  "rules": [
+    "Never name a specific company — use 'at a large-scale manufacturing operation'",
+    "No PDF, no carousel — one single image only",
+    "Headline must work as a standalone screenshot-worthy statement",
+    "Numbers and specific mechanisms over vague claims"
+  ]
+}

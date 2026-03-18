@@ -1,0 +1,39 @@
+import os
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from backend.config import get_config
+from backend.routers import topics, generate, regenerate, publish
+
+# Validate env vars at startup
+try:
+    cfg = get_config()
+except EnvironmentError as e:
+    print(f"[Startup] CONFIGURATION ERROR: {e}")
+    raise
+
+app = FastAPI(title="Content Pipeline API", version="1.0.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[cfg["frontend_url"], "http://localhost:3000", "http://localhost:3001"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(topics.router, prefix="/api")
+app.include_router(generate.router, prefix="/api")
+app.include_router(regenerate.router, prefix="/api")
+app.include_router(publish.router, prefix="/api")
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
+@app.get("/card/{slug}")
+async def serve_card(slug: str):
+    path = f"output/linkedin/{slug}/post.jpg"
+    if not os.path.exists(path):
+        raise HTTPException(status_code=404, detail="Card not found")
+    return FileResponse(path, media_type="image/jpeg")

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Content Pipeline — Dashboard</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header>
+    <h1>Content Pipeline</h1>
+    <button id="logout-btn">Sign out</button>
+  </header>
+
+  <!-- Step 1: Topic selection -->
+  <section id="step-topic" class="step active">
+    <h2>How do you want to start?</h2>
+    <div class="option-buttons">
+      <button id="btn-suggest" class="option-btn">Suggest me 5 topics</button>
+      <button id="btn-custom" class="option-btn">I have a topic</button>
+    </div>
+
+    <!-- Option A: Suggestions -->
+    <div id="suggestions-panel" class="panel hidden">
+      <p class="loading" id="loading-topics">Scanning sources...</p>
+      <ul id="topic-list"></ul>
+    </div>
+
+    <!-- Option B: Custom -->
+    <div id="custom-panel" class="panel hidden">
+      <input type="text" id="custom-topic" placeholder="Your topic"/>
+      <textarea id="custom-details" placeholder="Research notes, key points, tone preferences..."></textarea>
+      <button id="btn-submit-custom">Generate post</button>
+    </div>
+  </section>
+
+  <!-- Step 2: Generating -->
+  <section id="step-generating" class="step hidden">
+    <div class="spinner"></div>
+    <p>Drafting your post and rendering the card...</p>
+    <p class="hint">This takes about 30–60 seconds</p>
+  </section>
+
+  <!-- Step 3: Review -->
+  <section id="step-review" class="step hidden">
+    <h2>Review your post</h2>
+    <div class="review-grid">
+      <div class="card-preview">
+        <img id="card-image" src="" alt="Generated card"/>
+      </div>
+      <div class="post-content">
+        <h3 id="review-headline"></h3>
+        <p id="review-caption"></p>
+        <p id="review-hashtags" class="hashtags"></p>
+      </div>
+    </div>
+    <div class="review-actions">
+      <button id="btn-approve" class="btn-approve">Approve and publish</button>
+      <div class="improve-section">
+        <textarea id="feedback-input" placeholder="What would you like to improve?"></textarea>
+        <button id="btn-improve" class="btn-improve">Improve post</button>
+      </div>
+    </div>
+    <p id="iteration-label" class="hint"></p>
+  </section>
+
+  <!-- Step 4: Published -->
+  <section id="step-done" class="step hidden">
+    <div class="success-icon">&#10003;</div>
+    <h2>Published to LinkedIn</h2>
+    <p>Topic has been logged. It will not be suggested again.</p>
+    <button id="btn-new">Start a new post</button>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>
