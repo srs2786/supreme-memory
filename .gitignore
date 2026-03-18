@@ -7,4 +7,5 @@ __pycache__/
 *.jpeg
 *.png
 !assets/headshots/head_shot.jpg
+!assets/fonts/*.ttf
 node_modules/

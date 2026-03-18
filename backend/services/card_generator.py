@@ -9,18 +9,9 @@ def load_style():
         return json.load(f)["card"]
 
 def get_font(size: int, bold=False):
-    """Load font with Linux/Mac fallback."""
-    try:
-        if bold:
-            return ImageFont.truetype("/System/Library/Fonts/HelveticaNeue.ttc", size, index=1)
-        return ImageFont.truetype("/System/Library/Fonts/HelveticaNeue.ttc", size, index=0)
-    except Exception:
-        try:
-            path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold \
-                   else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-            return ImageFont.truetype(path, size)
-        except Exception:
-            return ImageFont.load_default()
+    """Load bundled Work Sans font — works on all platforms."""
+    font_file = "assets/fonts/WorkSans-Bold.ttf" if bold else "assets/fonts/WorkSans-Regular.ttf"
+    return ImageFont.truetype(font_file, size)
 
 def wrap_text(text: str, font, max_width: int) -> list[str]:
     dummy = Image.new("RGB", (1, 1))
@@ -59,13 +50,13 @@ def render_card(draft: dict, slug: str) -> str:
     colors = style["colors"]
 
     # Fonts
-    f_name     = get_font(48, bold=True)
-    f_title    = get_font(36, bold=False)
-    f_headline = get_font(88, bold=True)
-    f_num      = get_font(36, bold=False)
-    f_sec_bold = get_font(46, bold=True)
-    f_body     = get_font(38, bold=False)
-    f_footer   = get_font(36, bold=False)
+    f_name     = get_font(56, bold=True)
+    f_title    = get_font(42, bold=False)
+    f_headline = get_font(96, bold=True)
+    f_num      = get_font(40, bold=False)
+    f_sec_bold = get_font(54, bold=True)
+    f_body     = get_font(44, bold=False)
+    f_footer   = get_font(40, bold=False)
 
     img = Image.new("RGB", (W, H), "#FFFFFF")
     d = ImageDraw.Draw(img)
