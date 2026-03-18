@@ -4,7 +4,7 @@ from openai import OpenAI
 from backend.config import get_config
 from backend.utils.retry import retry_with_backoff
 
-MODEL = "anthropic/claude-sonnet-4-5"  # OpenRouter model ID — change if needed
+MODEL = "openai/gpt-4o-mini"  # OpenRouter model ID — change if needed
 
 def get_client():
     cfg = get_config()
