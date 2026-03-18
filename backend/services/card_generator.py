@@ -116,8 +116,8 @@ def render_card(draft: dict, slug: str) -> str:
             y += (bbox[3] - bbox[1]) + 10
         y += 44
 
-        # Safety check — stop if exceeding canvas
-        if y > H - 80:
+        # Safety check — stop if exceeding canvas (leave room for footer)
+        if y > H - 160:
             break
 
     # Footer
