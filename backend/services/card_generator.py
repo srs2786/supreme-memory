@@ -9,18 +9,19 @@ def load_style():
         return json.load(f)["card"]
 
 def get_font(size: int, bold=False):
-    """Load font — Helvetica on Mac, DejaVu on Linux (Railway)."""
-    try:
-        idx = 1 if bold else 0
-        return ImageFont.truetype("/System/Library/Fonts/HelveticaNeue.ttc", size, index=idx)
-    except Exception:
-        pass
-    try:
-        path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold \
-               else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-        return ImageFont.truetype(path, size)
-    except Exception:
-        pass
+    """Load font — bundled DejaVu first, then system fallbacks."""
+    bundled = "assets/fonts/DejaVuSans-Bold.ttf" if bold else "assets/fonts/DejaVuSans.ttf"
+    candidates = [
+        bundled,
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/System/Library/Fonts/HelveticaNeue.ttc",
+    ]
+    for path in candidates:
+        try:
+            idx = 1 if (bold and path.endswith("Helvetica.ttc")) else 0
+            return ImageFont.truetype(path, size, index=idx)
+        except Exception:
+            continue
     return ImageFont.load_default()
 
 def wrap_text(text: str, font, max_width: int) -> list[str]:
