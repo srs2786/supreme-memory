@@ -4,13 +4,14 @@ from openai import OpenAI
 from backend.config import get_config
 from backend.utils.retry import retry_with_backoff
 
-MODEL = "anthropic/claude-opus-4-5"  # OpenRouter model ID — change if needed
+MODEL = "anthropic/claude-sonnet-4-5"  # OpenRouter model ID — change if needed
 
 def get_client():
     cfg = get_config()
     return OpenAI(
         api_key=cfg["openrouter_api_key"],
         base_url="https://openrouter.ai/api/v1",
+        timeout=60.0,
     )
 
 def load_style_guide() -> dict:
