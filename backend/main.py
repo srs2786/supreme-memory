@@ -31,6 +31,31 @@ app.include_router(publish.router, prefix="/api")
 async def health():
     return {"status": "ok"}
 
+@app.get("/debug/fonts")
+async def debug_fonts():
+    import glob, subprocess
+    results = {}
+    # Check known paths
+    paths = [
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/System/Library/Fonts/HelveticaNeue.ttc",
+    ]
+    results["known_paths"] = {p: os.path.exists(p) for p in paths}
+    # Find DejaVu anywhere
+    results["nix_search"] = glob.glob("/nix/store/*/share/fonts/truetype/DejaVuSans.ttf")[:3]
+    results["usr_share_dejavu"] = glob.glob("/usr/share/fonts/truetype/dejavu/*.ttf")
+    # Test PIL font loading
+    from PIL import ImageFont
+    for path in paths:
+        if os.path.exists(path):
+            try:
+                ImageFont.truetype(path, 40)
+                results[f"pil_{path}"] = "OK"
+            except Exception as e:
+                results[f"pil_{path}"] = str(e)
+    return results
+
 @app.get("/card/{slug}")
 async def serve_card(slug: str):
     path = f"output/linkedin/{slug}/post.jpg"
